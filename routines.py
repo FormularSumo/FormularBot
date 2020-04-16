@@ -437,7 +437,7 @@ class jump_shot():
         else:
             if (raw_time_remaining > 0.2 and not shot_valid(agent,self,150)) or raw_time_remaining <= -0.9 or (not agent.me.airborne and self.counter > 0):
                 agent.pop()
-                agent.push(wavedash_recovery())
+                agent.push(recovery())
             elif self.counter == 0 and local_acceleration_required[2] > 0.0 and raw_time_remaining > 0.083:
                 #Initial jump to get airborne + we hold the jump button for extra power as required
                 agent.controller.jump = True
@@ -458,26 +458,81 @@ class jump_shot():
                 agent.controller.yaw = self.y if abs(self.y) > 0.3 else 0
 
 class kickoff():
-    def __init__(self,off_centre_kickoff = False):
+    def __init__(self,x_position):
         #the time the jump began
         self.time = -1
-        self.off_centre_kickoff = off_centre_kickoff
-    def run(self,agent):
+        self.counter = 0
         try:
-            if distance_to_ball > closest_ally_to_ball_distance:
-                agent.clear()
+            self.kickoff
         except:
+            if x_position == 2047 or x_position == 2048:
+                self.kickoff = 'diagonal_right'
+                print('diagonal right')
+            elif x_position == -2047 or x_position == -2048:
+                self.kickoff = 'diagonal_left'
+            elif x_position == -255 or x_position == -256:
+                self.kickoff = 'back_left'
+            elif x_position == 255 or x_position == 256:
+                self.kickoff = 'back_right'
+            else:
+                self.kickoff = 'back_centre'
+    def run(self,agent):
+        if agent.kickoff_flag == False:
+            agent.pop()
+        else:
             if self.time == -1:
                 elapsed = 0
                 self.time = agent.time
             else:
                 elapsed = agent.time - self.time
-            if elapsed < 0.5 and self.off_centre_kickoff:
-                relative_target = agent.boosts[7].location - agent.me.location
+            
+            if self.kickoff == 'diagonal_right' or self.kickoff == 'diagonal_left':
+                defaultThrottle(agent,2300)
+                agent.controller.boost = True
+                if elapsed >= 0.4:
+                    relative_target = agent.ball.location - agent.me.location
+                else:
+                    if self.kickoff == 'diagonal_right':
+                        relative_target = agent.ball.location + Vector3(600*side(agent.team),0,0) - agent.me.location
+                    else:
+                        relative_target = agent.ball.location - Vector3(600*side(agent.team),0,0) - agent.me.location
+                local_target = agent.me.local(relative_target)
+                defaultPD(agent,local_target)
+                
+                if elapsed > 0.35 and elapsed < 0.4:
+                    agent.controller.jump = True
+                elif elapsed >= 0.4 and self.counter < 3:
+                    agent.controller.jump = False
+                    self.counter += 1
+                elif elapsed >= 0.4 and self.counter < 4:
+                    agent.controller.jump = True
+                    agent.controller.pitch = -1
+                    if self.kickoff == 'diagonal_right':
+                        agent.controller.roll = -1
+                    else:
+                        agent.controller.roll = 1
+                    self.counter += 1
+                elif self.counter == 4:
+                    agent.controller.jump = False
+                    self.counter += 1
+                elif self.counter > 4:
+                    if not agent.me.airborne:
+                        agent.push(flip(agent.me.local(agent.ball.location - agent.me.location)))
+                    else:
+                        if self.kickoff == 'diagonal_right':
+                            agent.controller.yaw = 1
+                        else:
+                            agent.controller.yaw = -1  
+            
+
+
+            elif elapsed < 0.5 and self.kickoff == 'back_right' or self.kickoff == 'back_left' and elapsed < 0.5:
+                relative_target = agent.boosts[7 if side(agent.team) == -1 else 26].location - agent.me.location
                 local_target = agent.me.local(relative_target)
                 defaultPD(agent,local_target)
                 defaultThrottle(agent,2300)
                 agent.controller.boost = True
+
             else:
                 target = agent.ball.location + Vector3(0,200*side(agent.team),0)
                 local_target = agent.me.local(target - agent.me.location)

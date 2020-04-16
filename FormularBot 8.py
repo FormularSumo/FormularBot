@@ -49,7 +49,7 @@ class FormularBot(GoslingAgent):
         if agent.index == 0:
             agent.debug_stack()
             #print(me_onside)
-            #print(closest_to_ball)
+            #print(distance_ball_friendly_goal)
             #agent.line(agent.foe_goal.left_post,agent.foe_goal.right_post)
             #print(Vector3(agent.ball.location))
             #print(closest_ally_friendly_goal_distance,distance_to_friendly_goal)
@@ -57,14 +57,14 @@ class FormularBot(GoslingAgent):
             #my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
             #agent.line(my_point - Vector3(0,0,100), my_point + Vector3(0,0,500), [0,255,0])
 
-        if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal:
+        if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal and len(agent.friends) > 0:
             agent.clear()
 
         if len(agent.stack) < 1:
             if agent.kickoff_flag and closest_to_ball:
-                agent.push(kickoff(True if abs(agent.me.location.x) == 256 and abs(agent.me.location.y) == 3840 else False))
+                agent.push(kickoff(int(agent.me.location.x * side(agent.team))))
 
-            elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000:
+            elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and len(agent.friends) > 0:
                 agent.push(goto_friendly_goal)
             elif me_onside:
                 if len(shots["goal"]) > 0:
@@ -78,6 +78,9 @@ class FormularBot(GoslingAgent):
                 if agent.me.boost < 20:
                     agent.push(get_nearest_big_boost)
                 else:
-                    agent.push(demo_enemy_closest_ball(True))
+                    if len(agent.foes) > 0:
+                        agent.push(demo_enemy_closest_ball(True))
+                    else:
+                        agent.push(goto_friendly_goal)
             else:
                 agent.push(goto_friendly_goal)
