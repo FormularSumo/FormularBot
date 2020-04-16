@@ -17,17 +17,20 @@ class goto_friendly_goal():
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
 
-        relative = agent.friend_goal.location - agent.me.location
-        defaultPD(agent,agent.me.local(relative))
+        if abs(agent.me.location.y) < 5000:   
+            relative = agent.friend_goal.location - agent.me.location
+            defaultPD(agent,agent.me.local(relative))
+            angles = defaultPD(agent, agent.me.local(relative))
 
-        angles = defaultPD(agent, agent.me.local(relative))
-
-        if abs(agent.me.location.y) < 5000:
-                    
-            if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
-                agent.push(half_flip())
             defaultThrottle(agent,2300)
-            agent.me.boost = True
+        else:
+            relative = agent.foe_goal.location - agent.me.location
+            defaultPD(agent,agent.me.local(relative))
+            angles = defaultPD(agent, agent.me.local(relative))
+        
+        if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+            agent.push(half_flip())
+        
         if me_onside:
             agent.clear()
 
@@ -434,7 +437,7 @@ class jump_shot():
         else:
             if (raw_time_remaining > 0.2 and not shot_valid(agent,self,150)) or raw_time_remaining <= -0.9 or (not agent.me.airborne and self.counter > 0):
                 agent.pop()
-                agent.push(recovery())
+                agent.push(wavedash_recovery())
             elif self.counter == 0 and local_acceleration_required[2] > 0.0 and raw_time_remaining > 0.083:
                 #Initial jump to get airborne + we hold the jump button for extra power as required
                 agent.controller.jump = True

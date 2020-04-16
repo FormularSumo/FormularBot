@@ -24,27 +24,34 @@ class FormularBot(GoslingAgent):
         shots = find_hits(agent,targets)
 
         allies = agent.friends
-        closest_ally_to_ball = "none"
-        closest_ally_to_ball_distance = 99999
+        cally_to_ball = "none"
+        ally_to_ball_distance = 99999
         ally_to_friendly_goal = "none"
         ally_to_friendly_goal_distance = 99999
 
         for item in allies:
             item_distance = (item.location - agent.ball.location).flatten().magnitude()
             item_goal_distance = (item.location - agent.friend_goal.location).flatten().magnitude()
-            if item_distance < closest_ally_to_ball_distance:
-                closest_ally_to_ball = item
-                closest_ally_to_ball_distance = item_distance
+            if item_distance < ally_to_ball_distance:
+                ally_to_ball = item
+                ally_to_ball_distance = item_distance
             if item_goal_distance < ally_to_friendly_goal_distance:
                 ally_to_friendly_goal = item
                 ally_to_friendly_goal_distance = item_goal_distance
 
-
+        closest_ally_to_ball_distance = ally_to_ball_distance
         closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
+
+
+        closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
 
 
         if agent.index == 0:
             agent.debug_stack()
+            #print(me_onside)
+            #print(closest_to_ball)
+            #agent.line(agent.foe_goal.left_post,agent.foe_goal.right_post)
+            #print(Vector3(agent.ball.location))
             #print(closest_ally_friendly_goal_distance,distance_to_friendly_goal)
             #agent.line(agent.friend_goal.location, agent.ball.location, [255,255,255])
             #my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
@@ -54,7 +61,7 @@ class FormularBot(GoslingAgent):
             agent.clear()
 
         if len(agent.stack) < 1:
-            if agent.kickoff_flag and distance_to_ball <= closest_ally_to_ball_distance:
+            if agent.kickoff_flag and closest_to_ball:
                 agent.push(kickoff(True if abs(agent.me.location.x) == 256 and abs(agent.me.location.y) == 3840 else False))
 
             elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000:
@@ -67,12 +74,7 @@ class FormularBot(GoslingAgent):
                     agent.push(shots["upfield"][0])
                 else:  
                     agent.push(short_shot(agent.foe_goal.location))
-                    if len(agent.stack) < 1:
-                        if agent.me.location.y > 0*side(agent.team):
-                            agent.push(ball_chase)
-                        else:
-                            agent.push(goto_friendly_goal)
-            elif distance_ball_friendly_goal > 7000:
+            elif distance_ball_friendly_goal > 6000:
                 if agent.me.boost < 20:
                     agent.push(get_nearest_big_boost)
                 else:
