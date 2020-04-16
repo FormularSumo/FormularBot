@@ -84,6 +84,8 @@ class FormularBot(GoslingAgent):
             agent.clear()
         elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
             agent.clear()
+        elif distance_ball_friendly_goal < 2000 and not close and agent.stack != get_nearest_big_boost:
+            agent.clear()
 
         if len(agent.stack) < 1:
             if agent.kickoff_flag and closest_to_ball:
