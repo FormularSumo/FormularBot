@@ -141,7 +141,7 @@ class demo_enemy_closest_ball():
             agent.clear()
         else:   
             if agent.me.boost < 10:
-                agent.push(get_nearest_big_boost(self.demo_bot))
+                agent.push(get_nearest_big_boost)
             else:  
                 relative_target = agent.foes[y].location - agent.me.location
                 local_target = agent.me.local(relative_target)
