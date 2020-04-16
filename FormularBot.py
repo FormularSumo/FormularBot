@@ -1,6 +1,6 @@
-from tools import  *
-from objects import *
-from routines import *
+from FormularBot.Common.tools import  *
+from FormularBot.Common.objects import *
+from FormularBot.Common.routines import *
 
 
 class FormularBot(GoslingAgent):
