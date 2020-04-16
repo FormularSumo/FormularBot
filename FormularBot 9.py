@@ -64,6 +64,7 @@ class FormularBot(GoslingAgent):
 
         if agent.index == 0:
             agent.debug_stack()
+            #agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
             #print(closest_to_ball)
             #print(distance_to_ball,closest_ally_to_ball_distance)
             #print(close)
@@ -75,6 +76,9 @@ class FormularBot(GoslingAgent):
             #agent.line(agent.friend_goal.location, agent.ball.location, [255,255,255])
             #my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
             #agent.line(my_point - Vector3(0,0,100), my_point + Vector3(0,0,500), [0,255,0])
+
+        #if agent.index == 1:
+            #print(agent.me.location)
 
         if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal and len(agent.friends) > 0:
             agent.clear()
