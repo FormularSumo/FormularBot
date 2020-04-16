@@ -14,7 +14,7 @@ def find_hits(agent,targets):
     #>{"goal":[a ton of jump and aerial routines,in order from soonest to latest], "anywhere_but_my_net":[more routines and stuff]}
     hits = {name:[] for name in targets}
     struct = agent.get_ball_prediction_struct()
-    quickest_intercept_time = 1000
+    
     #Begin looking at slices 0.25s into the future
     #The number of slices 
     i = 15
@@ -22,9 +22,7 @@ def find_hits(agent,targets):
         #Gather some data about the slice
         intercept_time = struct.slices[i].game_seconds
         time_remaining = intercept_time - agent.time
-        
-        if time_remaining > 0:             
-        
+        if time_remaining > 0:
             ball_location = Vector3(struct.slices[i].physics.location)
             ball_velocity = Vector3(struct.slices[i].physics.velocity).magnitude()
 
@@ -68,21 +66,11 @@ def find_hits(agent,targets):
                             #The slope represents how close the car is to the chosen vector, higher = better
                             #A slope of 1.0 would mean the car is 45 degrees off
                             slope = find_slope(best_shot_vector,car_to_ball)
-                            try:
-                                temp = quickest_intercept_time
-                                del temp
-                            except:
-                                quickest_intercept_time = time_remaining
-                            print(time_remaining < quickest_intercept_time)
-                            if time_remaining < quickest_intercept_time:
-                                print(True)
-                                quickest_intercept_time = time_remaining
-                                hits = {name:[] for name in targets}
-                                if forward_flag:
-                                    if ball_location[2] <= 300 and slope > 0.0:
-                                        hits[pair].insert(0,jump_shot(ball_location,intercept_time,best_shot_vector,slope))
-                                    elif ball_location[2] > 300 and slope > 1.0 and (ball_location[2]-250) * 0.14 <= agent.me.boost:
-                                        hits[pair].insert(0,aerial_shot(ball_location,intercept_time,best_shot_vector,slope))
-                                elif backward_flag and ball_location[2] <= 280 and slope > 0.25:
-                                    hits[pair].append(jump_shot(ball_location,intercept_time,best_shot_vector,slope,-1))
+                            if forward_flag:
+                                if ball_location[2] <= 300 and slope > 0.0:
+                                    hits[pair].append(jump_shot(ball_location,intercept_time,best_shot_vector,slope))
+                                if ball_location[2] > 300 and ball_location[2] < 600 and slope > 1.0 and (ball_location[2]-250) * 0.14 > agent.me.boost:
+                                    hits[pair].append(aerial_shot(ball_location,intercept_time,best_shot_vector,slope))
+                            elif backward_flag and ball_location[2] <= 280 and slope > 0.25:
+                                hits[pair].append(jump_shot(ball_location,intercept_time,best_shot_vector,slope,-1))
     return hits
