@@ -21,11 +21,13 @@ class goto_friendly_goal():
         defaultPD(agent,agent.me.local(relative))
 
         angles = defaultPD(agent, agent.me.local(relative))
-                
-        if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
-            agent.push(half_flip())
-        defaultThrottle(agent,2300)
-        agent.me.boost = True
+
+        if abs(agent.me.location.y) < 5000:
+                    
+            if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+                agent.push(half_flip())
+            defaultThrottle(agent,2300)
+            agent.me.boost = True
         if me_onside:
             agent.clear()
 
