@@ -428,8 +428,7 @@ class goto_boost():
         agent.controller.boost = self.boost.large if abs(angles[1]) < 0.3 else False
         if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
             agent.push(half_flip())
-        agent.controller.handbrake = True if abs(angles[1]) > 1 and distance_remaining < 1000 else agent.controller.handbrake
-        agent.controller.boost = True
+        agent.controller.handbrake = True if abs(angles[1]) > 1 and distance_remaining < 1000 else agent.controller.handbrake and agent.controller.boost = True
         velocity = 1+agent.me.velocity.magnitude()
         if self.boost.active == False or agent.me.boost >= 99.0 or distance_remaining < 350:
             agent.clear()
