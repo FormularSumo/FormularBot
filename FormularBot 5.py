@@ -43,7 +43,8 @@ class FormularBot(GoslingAgent):
 
         if len(agent.stack) < 1:
             if agent.kickoff_flag and distance_to_ball <= closest_ally_to_ball_distance:
-                agent.push(kickoff)
+                if abs(agent.me.location.x) == 256 and abs(agent.me.location.y) == 3840:
+                    agent.push(kickoff(True if abs(agent.me.location.x) == 256 and abs(agent.me.location.y) == 3840 else False))
             elif me_onside:
                 if len(shots["goal"]) > 0:
                     agent.push(shots["goal"][0])

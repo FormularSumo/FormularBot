@@ -453,15 +453,26 @@ class jump_shot():
                 agent.controller.yaw = self.y if abs(self.y) > 0.3 else 0
 
 class kickoff():
-    #A simple 1v1 kickoff that just drives up behind the ball and flips
-    def run(agent):
+    def __init__(self,off_centre_kickoff = False):
+        #the time the jump began
+        self.time = -1
+        self.off_centre_kickoff = off_centre_kickoff
+    def run(self,agent):
         try:
             if distance_to_ball > closest_ally_to_ball_distance:
                 agent.clear()
-                print("stopped kickoff")
         except:
-            if (abs(agent.me.location.x) == 256 and abs(agent.me.location.y) == 3840) and not(abs(agent.me.location.x) == 940 and abs(agent.me.location.y) == 3308):
+            if self.time == -1:
+                elapsed = 0
+                self.time = agent.time
+            else:
+                elapsed = agent.time - self.time
+            if elapsed < 0.5 and self.off_centre_kickoff:
+                relative_target = agent.boosts[7].location - agent.me.location
+                local_target = agent.me.local(relative_target)
+                defaultPD(agent,local_target)
                 defaultThrottle(agent,2300)
+                agent.controller.boost = True
             else:
                 target = agent.ball.location + Vector3(0,200*side(agent.team),0)
                 local_target = agent.me.local(target - agent.me.location)
@@ -472,6 +483,7 @@ class kickoff():
                     agent.pop()
                     #flip towards opponent goal
                     agent.push(flip(agent.me.local(agent.foe_goal.location - agent.me.location)))
+          
 
 class recovery():
     #Point towards our velocity vector and land upright, unless we aren't moving very fast
