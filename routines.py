@@ -16,23 +16,26 @@ class goto_friendly_goal():
         goal_to_me = agent.me.location - agent.friend_goal.location
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
-
-        if abs(agent.me.location.y) < 5000:   
-            relative = agent.friend_goal.location - agent.me.location
-            defaultPD(agent,agent.me.local(relative))
-            angles = defaultPD(agent, agent.me.local(relative))
-
-            defaultThrottle(agent,2300)
-        else:
-            relative = agent.foe_goal.location - agent.me.location
-            defaultPD(agent,agent.me.local(relative))
-            angles = defaultPD(agent, agent.me.local(relative))
-        
-        if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
-            agent.push(half_flip())
-        
-        if me_onside:
+        close = (agent.me.location - agent.ball.location).magnitude() < 750
+        if close and not me_onside:
             agent.clear()
+        else:
+            if abs(agent.me.location.y) < 5000:   
+                relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
+                defaultPD(agent,agent.me.local(relative))
+                angles = defaultPD(agent, agent.me.local(relative))
+
+                defaultThrottle(agent,2300)
+            else:
+                relative = agent.foe_goal.location - agent.me.location
+                defaultPD(agent,agent.me.local(relative))
+                angles = defaultPD(agent, agent.me.local(relative))
+            
+            if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+                agent.push(half_flip())
+            
+            if me_onside:
+                agent.clear()
 
 
 class get_nearest_big_boost():
@@ -89,6 +92,35 @@ class demo_enemy_closest_ball():
     def __init__(self,demo_bot):
         self.demo_bot = demo_bot
     def run(self,agent):
+        my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
+        goal_to_me = agent.me.location - agent.friend_goal.location
+        my_distance = my_goal_to_ball.dot(goal_to_me)
+        me_onside = my_distance + 80 < my_ball_distance
+
+        distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
+
+        allies = agent.friends
+        cally_to_ball = "none"
+        ally_to_ball_distance = 99999
+        ally_to_friendly_goal = "none"
+        ally_to_friendly_goal_distance = 99999
+
+        for item in allies:
+            item_distance = (item.location - agent.ball.location).flatten().magnitude()
+            item_goal_distance = (item.location - agent.friend_goal.location).flatten().magnitude()
+            if item_distance < ally_to_ball_distance:
+                ally_to_ball = item
+                ally_to_ball_distance = item_distance
+            if item_goal_distance < ally_to_friendly_goal_distance:
+                ally_to_friendly_goal = item
+                ally_to_friendly_goal_distance = item_goal_distance
+
+        closest_ally_to_ball_distance = ally_to_ball_distance
+        closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
+
+
+        closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
+
         relative_target = agent.ball.location - agent.friend_goal.location
         distance_ball_friendly_goal = relative_target.magnitude()
 
@@ -105,7 +137,7 @@ class demo_enemy_closest_ball():
                 y = x
             x =+ 1
 
-        if self.demo_bot == False and closest_distance > 3000 or self.demo_bot == False and distance_ball_friendly_goal < 6000:
+        if self.demo_bot == False and closest_distance > 2000 or self.demo_bot == False and distance_ball_friendly_goal < 6000 or self.demo_bot == False and me_onside and (closest_to_ball or (agent.ball.location.y * side(agent.team) * -1 > 4600 * side(agent.team) * -1) and agent.ball.location.x < 1000 and agent.ball.location.x > -1000):
             agent.clear()
         else:   
             if agent.me.boost < 10:
@@ -148,6 +180,57 @@ class half_flip():
         else:
             agent.pop()
 
+class go_centre():
+    def run(agent):
+        distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
+        distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
+
+        my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
+        goal_to_me = agent.me.location - agent.friend_goal.location
+        my_distance = my_goal_to_ball.dot(goal_to_me)
+        me_onside = my_distance + 80 < my_ball_distance
+
+        relative_target = agent.ball.location - agent.friend_goal.location
+        distance_ball_friendly_goal = relative_target.magnitude()
+
+        allies = agent.friends
+        cally_to_ball = "none"
+        ally_to_ball_distance = 99999
+        ally_to_friendly_goal = "none"
+        ally_to_friendly_goal_distance = 99999
+
+        for item in allies:
+            item_distance = (item.location - agent.ball.location).flatten().magnitude()
+            item_goal_distance = (item.location - agent.friend_goal.location).flatten().magnitude()
+            if item_distance < ally_to_ball_distance:
+                ally_to_ball = item
+                ally_to_ball_distance = item_distance
+            if item_goal_distance < ally_to_friendly_goal_distance:
+                ally_to_friendly_goal = item
+                ally_to_friendly_goal_distance = item_goal_distance
+
+        closest_ally_to_ball_distance = ally_to_ball_distance
+        closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
+
+
+        closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
+
+        if me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) or closest_ally_friendly_goal_distance > distance_to_friendly_goal:
+            agent.clear()
+        else:
+            relative_target = Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,0) - agent.me.location
+            local_target = agent.me.local(relative_target)
+            if relative_target.magnitude() > 500:
+                defaultPD(agent, local_target)
+                defaultThrottle(agent, 2300)
+            else:
+                defaultThrottle(agent, 0)
+                relative_target = agent.ball.location - agent.me.location 
+                angles = defaultPD(agent, agent.me.local(relative_target))
+                if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+                    agent.push(half_flip())                
+            agent.line(relative_target, agent.me.location, [255,0,255])
+            #print(Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,0),agent.me.location)
 
 class aerial_shot():
     #Very similar to jump_shot(), but instead designed to hit targets above 300uu
@@ -345,8 +428,8 @@ class goto_boost():
         agent.controller.boost = self.boost.large if abs(angles[1]) < 0.3 else False
         if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
             agent.push(half_flip())
-        agent.controller.handbrake = True if abs(angles[1]) > 2 else agent.controller.handbrake
-
+        agent.controller.handbrake = True if abs(angles[1]) > 1 and distance_remaining < 1000 else agent.controller.handbrake
+        agent.controller.boost = True
         velocity = 1+agent.me.velocity.magnitude()
         if self.boost.active == False or agent.me.boost >= 99.0 or distance_remaining < 350:
             agent.clear()
@@ -463,11 +546,11 @@ class kickoff():
         self.time = -1
         self.counter = 0
         try:
-            self.kickoff
+            temp = self.kickoff
+            del temp
         except:
             if x_position == 2047 or x_position == 2048:
                 self.kickoff = 'diagonal_right'
-                print('diagonal right')
             elif x_position == -2047 or x_position == -2048:
                 self.kickoff = 'diagonal_left'
             elif x_position == -255 or x_position == -256:
@@ -489,7 +572,7 @@ class kickoff():
             if self.kickoff == 'diagonal_right' or self.kickoff == 'diagonal_left':
                 defaultThrottle(agent,2300)
                 agent.controller.boost = True
-                if elapsed >= 0.4:
+                if elapsed > 0.4:
                     relative_target = agent.ball.location - agent.me.location
                 else:
                     if self.kickoff == 'diagonal_right':
@@ -501,16 +584,16 @@ class kickoff():
                 
                 if elapsed > 0.35 and elapsed < 0.4:
                     agent.controller.jump = True
-                elif elapsed >= 0.4 and self.counter < 3:
+                elif elapsed > 0.4 and self.counter < 3:
                     agent.controller.jump = False
                     self.counter += 1
-                elif elapsed >= 0.4 and self.counter < 4:
+                elif elapsed > 0.4 and self.counter < 4:
                     agent.controller.jump = True
                     agent.controller.pitch = -1
                     if self.kickoff == 'diagonal_right':
-                        agent.controller.roll = -1
+                        agent.controller.yaw = -0.5
                     else:
-                        agent.controller.roll = 1
+                        agent.controller.yaw = 0.5                 
                     self.counter += 1
                 elif self.counter == 4:
                     agent.controller.jump = False
@@ -567,6 +650,42 @@ class short_shot():
     def __init__(self,target):
         self.target = target
     def run(self,agent):
+        distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
+        distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
+
+        my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
+        goal_to_me = agent.me.location - agent.friend_goal.location
+        my_distance = my_goal_to_ball.dot(goal_to_me)
+        me_onside = my_distance + 80 < my_ball_distance
+
+        relative_target = agent.ball.location - agent.friend_goal.location
+        distance_ball_friendly_goal = relative_target.magnitude()
+
+        allies = agent.friends
+        cally_to_ball = "none"
+        ally_to_ball_distance = 99999
+        ally_to_friendly_goal = "none"
+        ally_to_friendly_goal_distance = 99999
+
+        for item in allies:
+            item_distance = (item.location - agent.ball.location).flatten().magnitude()
+            item_goal_distance = (item.location - agent.friend_goal.location).flatten().magnitude()
+            if item_distance < ally_to_ball_distance:
+                ally_to_ball = item
+                ally_to_ball_distance = item_distance
+            if item_goal_distance < ally_to_friendly_goal_distance:
+                ally_to_friendly_goal = item
+                ally_to_friendly_goal_distance = item_goal_distance
+
+        closest_ally_to_ball_distance = ally_to_ball_distance
+        closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
+
+
+        closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
+        if not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+            agent.clear()
+
+
         car_to_ball,distance = (agent.ball.location - agent.me.location).normalize(True)
         ball_to_target = (self.target - agent.ball.location).normalize()
 

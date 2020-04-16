@@ -6,12 +6,28 @@ from routines import *
 class FormularBot(GoslingAgent):
     def run(agent):
 
+        relative_target = agent.ball.location - agent.friend_goal.location
+        distance_ball_friendly_goal = relative_target.magnitude()
+
+        enemies = agent.foes
+        closest = enemies[0]
+        closest_distance = (enemies[0].location - agent.ball.location).magnitude()
+        x = 0
+        y = 0
+        for item in enemies:
+            item_distance = (item.location - agent.ball.location).magnitude()
+            if item_distance < closest_distance:
+                closest = item
+                closest_distance = item_distance
+                y = x
+            x =+ 1
+
         my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
         goal_to_me = agent.me.location - agent.friend_goal.location
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
 
-        close = (agent.me.location - agent.ball.location).magnitude() < 4000
+        close = (agent.me.location - agent.ball.location).magnitude() < 750
         distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
         distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
 
@@ -48,6 +64,9 @@ class FormularBot(GoslingAgent):
 
         if agent.index == 0:
             agent.debug_stack()
+            #print(closest_to_ball)
+            #print(distance_to_ball,closest_ally_to_ball_distance)
+            #print(close)
             #print(me_onside)
             #print(distance_ball_friendly_goal)
             #agent.line(agent.foe_goal.left_post,agent.foe_goal.right_post)
@@ -59,14 +78,16 @@ class FormularBot(GoslingAgent):
 
         if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal and len(agent.friends) > 0:
             agent.clear()
+        elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+            agent.clear()
 
         if len(agent.stack) < 1:
             if agent.kickoff_flag and closest_to_ball:
                 agent.push(kickoff(int(agent.me.location.x * side(agent.team))))
 
-            elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and len(agent.friends) > 0:
+            elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and len(agent.friends) > 0 and (distance_ball_friendly_goal > 6000 or agent.kickoff_flag):
                 agent.push(goto_friendly_goal)
-            elif me_onside:
+            elif me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500):
                 if len(shots["goal"]) > 0:
                     agent.push(shots["goal"][0])
                     #send(random.choice(chat_ids))
@@ -78,9 +99,12 @@ class FormularBot(GoslingAgent):
                 if agent.me.boost < 20:
                     agent.push(get_nearest_big_boost)
                 else:
-                    if len(agent.foes) > 0:
-                        agent.push(demo_enemy_closest_ball(True))
-                    else:
-                        agent.push(goto_friendly_goal)
+                    agent.push(go_centre)
             else:
-                agent.push(goto_friendly_goal)
+                if not close:
+                    if closest_ally_friendly_goal_distance > distance_to_friendly_goal:
+                        agent.push(goto_friendly_goal)
+                    else:
+                        agent.push(go_centre)
+                else:
+                    agent.push(get_nearest_big_boost)
