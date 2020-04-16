@@ -1,0 +1,3 @@
+Improved half flip so it lands exactly 180 from where it started and doesn't do anything else until it touches the ground 
+If getting boost and ball is within 2000 of goal and not close stack is cleared. 
+Boosts while going for boost
