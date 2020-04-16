@@ -3,7 +3,6 @@ from objects import *
 from routines import *
         
 
-
 class DemoBot(GoslingAgent):
     def run(agent):
         if agent.index == 0:

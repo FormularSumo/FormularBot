@@ -219,9 +219,9 @@ class go_centre():
         if me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) or closest_ally_friendly_goal_distance > distance_to_friendly_goal:
             agent.clear()
         else:
-            relative_target = Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,0) - agent.me.location
+            relative_target = Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,50) - agent.me.location
             local_target = agent.me.local(relative_target)
-            if relative_target.magnitude() > 500:
+            if relative_target.magnitude() > 350:
                 defaultPD(agent, local_target)
                 defaultThrottle(agent, 2300)
             else:
@@ -229,9 +229,8 @@ class go_centre():
                 relative_target = agent.ball.location - agent.me.location 
                 angles = defaultPD(agent, agent.me.local(relative_target))
                 if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
-                    agent.push(half_flip())                
-            agent.line(relative_target, agent.me.location, [255,0,255])
-            #print(Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,0),agent.me.location)
+                    agent.push(half_flip())
+            agent.line(Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,50), agent.me.location, [255,0,255])
 
 class aerial_shot():
     #Very similar to jump_shot(), but instead designed to hit targets above 300uu
