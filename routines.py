@@ -168,16 +168,17 @@ class half_flip():
             elapsed = agent.time - self.time
         if elapsed < 0.15:
             agent.controller.jump = True
-        elif elapsed >=0.15 and self.counter < 3:
+        elif elapsed >=0.15 and self.counter < 1:
             agent.controller.jump = False
             self.counter += 1
-        elif elapsed < 0.45:
+        elif elapsed < 0.6:
             agent.controller.jump = True
             agent.controller.pitch = 1
-        elif elapsed < 0.9:
+        elif elapsed < 1.4:
             agent.controller.pitch = -1 
             agent.controller.roll = 1
-        else:
+            agent.controller.yaw = 1
+        elif not agent.me.airborne:
             agent.pop()
 
 class go_centre():
