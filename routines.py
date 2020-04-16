@@ -542,7 +542,7 @@ class jump_shot():
 
 
         closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
-        if not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+        if not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)) and not agent.me.airborne:
             agent.clear()
         else:
             raw_time_remaining = self.intercept_time - agent.time
