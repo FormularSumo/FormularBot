@@ -16,7 +16,7 @@ class goto_friendly_goal():
         goal_to_me = agent.me.location - agent.friend_goal.location
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
-        close = (agent.me.location - agent.ball.location).magnitude() < 750
+        close = (agent.me.location - agent.ball.location).magnitude() < 600
         if close and not me_onside:
             agent.clear()
         else:
@@ -216,7 +216,7 @@ class go_centre():
 
         closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
 
-        if me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) or closest_ally_friendly_goal_distance > distance_to_friendly_goal:
+        if me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) or closest_ally_friendly_goal_distance > distance_to_friendly_goal:
             agent.clear()
         else:
             relative_target = Vector3(agent.ball.location.x / 2, (agent.ball.location.y + 5120 * side(agent.team)) / 2,0) - agent.me.location
@@ -723,7 +723,7 @@ class short_shot():
 
 
         closest_to_ball = distance_to_ball <= closest_ally_to_ball_distance
-        if not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+        if not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
             agent.clear()
 
 

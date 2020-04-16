@@ -27,7 +27,7 @@ class FormularBot(GoslingAgent):
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
 
-        close = (agent.me.location - agent.ball.location).magnitude() < 750
+        close = (agent.me.location - agent.ball.location).magnitude() < 600
         distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
         distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
 
@@ -78,7 +78,7 @@ class FormularBot(GoslingAgent):
 
         if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal and len(agent.friends) > 0:
             agent.clear()
-        elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+        elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
             agent.clear()
 
         if len(agent.stack) < 1:
@@ -87,7 +87,7 @@ class FormularBot(GoslingAgent):
 
             elif closest_ally_friendly_goal_distance > distance_to_friendly_goal and len(agent.friends) > 0 and (distance_ball_friendly_goal > 6000 or agent.kickoff_flag):
                 agent.push(goto_friendly_goal)
-            elif me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 4200 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500):
+            elif me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500):
                 if len(shots["goal"]) > 0:
                     agent.push(shots["goal"][0])
                     #send(random.choice(chat_ids))
