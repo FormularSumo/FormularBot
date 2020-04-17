@@ -133,7 +133,7 @@ class FormularBot(GoslingAgent):
             if agent.index == 0:
                 print(stack)
 
-        if agent.me.velocity[0] == 0 and (not stack == 'goalie') or int(agent.me.location.z) == 40:
+        if agent.me.velocity[0] == 0 and int(agent.me.location.z) == 40:
             agent.controller.jump = True
                         
         if stack != 'kickoff':

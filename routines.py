@@ -451,7 +451,7 @@ class jump_shot():
                 if not self.dodging:
                     vector = agent.me.local(self.shot_vector)
                     self.p = abs(vector[0]) * -sign(vector[0])
-                    self.y = abs(vector[1]) * sign(vector[1]) * self.direction
+                    self.y = abs(vector[1]) * sign(vector[1])
                     self.dodging = True
                 #simulating a deadzone so that the dodge is more natural
                 agent.controller.pitch = self.p if abs(self.p) > 0.2 else 0 
