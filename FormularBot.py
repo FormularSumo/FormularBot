@@ -80,9 +80,13 @@ class FormularBot(GoslingAgent):
         #if agent.index == 1:
             #print(agent.me.location)
 
-        if closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and agent.stack != goto_friendly_goal and len(agent.friends) > 0:
+        if agent.stack == goto_friendly_goal and ((close and not me_onside) or me_onside):
             agent.clear()
-        elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+        elif agent.stack != goto_friendly_goal and closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal > 6000 and len(agent.friends) > 0:
+            agent.clear()
+        elif (agent.stack == short_shot or agent.stack == jump_shot or agent.stack == aerial_shot) and not(me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) and not agent.me.airborne):
+            agent.clear()
+        elif (agent.stack == go_centre) and (me_onside and (closest_to_ball or closest_ally_friendly_goal_distance > distance_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 3000 * side(agent.team) * -1) and agent.ball.location.x < 1500 and agent.ball.location.x > -1500) or closest_ally_friendly_goal_distance > distance_to_friendly_goal):
             agent.clear()
         elif distance_ball_friendly_goal < 2000 and not close and agent.stack != get_nearest_big_boost:
             agent.clear()

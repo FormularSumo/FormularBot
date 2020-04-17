@@ -1,0 +1,2 @@
+#Checks whether stack should be cleared while demoing
+if self.demo_bot == False and closest_distance > 2000 or self.demo_bot == False and distance_ball_friendly_goal < 6000 or self.demo_bot == False and me_onside and (closest_to_ball or (agent.ball.location.y * side(agent.team) * -1 > 4600 * side(agent.team) * -1) and agent.ball.location.x < 1000 and agent.ball.location.x > -1000):
