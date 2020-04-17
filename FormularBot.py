@@ -75,7 +75,7 @@ class FormularBot(GoslingAgent):
         else:
             goalie = False
 
-        if agent.index == 0:
+        #if agent.index == 0:
             #agent.debug_stack()
             #print(shooting,goalie)
             #agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
