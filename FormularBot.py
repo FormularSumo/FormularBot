@@ -135,7 +135,7 @@ class FormularBot(GoslingAgent):
                 agent.clear()
             if stack == 'going centre' and (shooting or goalie or close):
                 agent.clear()
-            if stack == 'shooting' and shooting == False and not(agent.me.airborne):
+            if stack == 'shooting' and shooting == False and not (close and (agent.me.airborne or me_onside)):
                 agent.clear()    
             if stack == 'goalie' and goalie == False:
                 agent.clear()
