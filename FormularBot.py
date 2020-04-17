@@ -76,7 +76,7 @@ class FormularBot(GoslingAgent):
             goalie = False
 
         if agent.index == 0:
-            agent.debug_stack()
+            #agent.debug_stack()
             #print(shooting,goalie)
             #agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
             #print(closest_to_ball)
@@ -130,7 +130,9 @@ class FormularBot(GoslingAgent):
                 else:
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
-        
+            if agent.index == 0:
+                print(stack)
+
         if agent.me.velocity[0] == 0 and (not stack == 'goalie') or int(agent.me.location.z) == 40:
             agent.controller.jump = True
                         
