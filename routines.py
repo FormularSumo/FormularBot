@@ -16,12 +16,12 @@ class goto_friendly_goal():
             relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
             defaultPD(agent,agent.me.local(relative))
             angles = defaultPD(agent, agent.me.local(relative))
-
             defaultThrottle(agent,2300)
         else:
             relative = agent.foe_goal.location - agent.me.location
             defaultPD(agent,agent.me.local(relative))
             angles = defaultPD(agent, agent.me.local(relative))
+            defaultThrottle(agent,0)
         
         if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
             agent.push(half_flip())
@@ -79,8 +79,6 @@ class wavedash_recovery():
 
 class demo_enemy_closest_ball():
     def run(agent):
-        if self.demo_bot == False and closest_distance > 2000 or self.demo_bot == False and distance_ball_friendly_goal < 6000 or self.demo_bot == False and me_onside and (closest_to_ball or (agent.ball.location.y * side(agent.team) * -1 > 4600 * side(agent.team) * -1) and agent.ball.location.x < 1000 and agent.ball.location.x > -1000):
-            agent.clear()
         if agent.me.boost < 10:
             agent.push(get_nearest_big_boost)
         else:  
@@ -306,9 +304,6 @@ class goto_boost():
         self.boost = boost
         self.target = target
     def run(self,agent):
-        relative_target = agent.ball.location - agent.friend_goal.location
-        distance_ball_friendly_goal = relative_target.magnitude()
-        close = (agent.me.location - agent.ball.location).magnitude() < 600
         car_to_boost = self.boost.location - agent.me.location
         distance_remaining = car_to_boost.flatten().magnitude()
 
