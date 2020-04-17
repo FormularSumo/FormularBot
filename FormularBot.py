@@ -9,18 +9,19 @@ class FormularBot(GoslingAgent):
         relative_target = agent.ball.location - agent.friend_goal.location
         distance_ball_friendly_goal = relative_target.magnitude()
 
-        enemies = agent.foes
-        closest = enemies[0]
-        closest_distance = (enemies[0].location - agent.ball.location).magnitude()
-        x = 0
-        y = 0
-        for item in enemies:
-            item_distance = (item.location - agent.ball.location).magnitude()
-            if item_distance < closest_distance:
-                closest = item
-                closest_distance = item_distance
-                y = x
-            x =+ 1
+        if len(agent.foes) > 0:
+            enemies = agent.foes
+            closest = enemies[0]
+            closest_distance = (enemies[0].location - agent.ball.location).magnitude()
+            x = 0
+            y = 0
+            for item in enemies:
+                item_distance = (item.location - agent.ball.location).magnitude()
+                if item_distance < closest_distance:
+                    closest = item
+                    closest_distance = item_distance
+                    y = x
+                x =+ 1
 
         my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
         goal_to_me = agent.me.location - agent.friend_goal.location
@@ -129,7 +130,10 @@ class FormularBot(GoslingAgent):
                 else:
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
-                    
+        
+        if agent.me.velocity[0] == 0 and (not stack == 'goalie') or int(agent.me.location.z) == 40:
+            agent.controller.jump = True
+                        
         if stack != 'kickoff':
             if stack == 'getting boost' and ((distance_ball_friendly_goal < 2000 and not close) or agent.me.boost > 20):
                 agent.clear()
