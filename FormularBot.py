@@ -76,7 +76,7 @@ class FormularBot(GoslingAgent):
 
         if agent.index == 0:
             agent.debug_stack()
-            print(shooting,goalie)
+            #print(shooting,goalie)
             #agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
             #print(closest_to_ball)
             #print(distance_to_ball,closest_ally_to_ball_distance)
@@ -130,8 +130,6 @@ class FormularBot(GoslingAgent):
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
                     
-        if agent.index == 0:
-            print(stack)
         if stack != 'kickoff':
             if stack == 'getting boost' and ((distance_ball_friendly_goal < 2000 and not close) or agent.me.boost > 20):
                 agent.clear()
