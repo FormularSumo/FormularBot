@@ -345,6 +345,9 @@ class Vector3:
     def angle(self,value):
         #Returns the angle between this Vector3 and another Vector3
         return math.acos(round(self.flatten().normalize().dot(value.flatten().normalize()),4))
+    def angle3D(self,value):
+        #Returns the angle between this Vector3 and another Vector3
+        return math.acos(round(self.normalize().dot(value.flatten().normalize()),4))
     def rotate(self,angle):
         #Rotates this Vector3 by the given angle in radians
         #Note that this is only 2D, in the x and y axis

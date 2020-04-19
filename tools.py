@@ -69,8 +69,12 @@ def find_hits(agent,targets):
                             if forward_flag:
                                 if ball_location[2] <= 300 and slope > 0.0:
                                     hits[pair].append(jump_shot(ball_location,intercept_time,best_shot_vector,slope))
-                                elif ball_location[2] > 300 and slope > 1.0 and (ball_location[2]-250) * 0.14 < agent.me.boost:
+                                elif 300 < ball_location[2] < 600 and slope > 1.0 and (ball_location[2]-250) * 0.14 < agent.me.boost:
                                     hits[pair].append(aerial_shot(ball_location,intercept_time,best_shot_vector,slope))
+                                elif ball_location.z > 600:
+                                    aerial = Aerial(ball_location, intercept_time, True, target=best_shot_vector)
+                                    if aerial.is_viable(agent, agent.time):
+                                        hits[pair].append(aerial)
                             elif backward_flag and ball_location[2] <= 280 and slope > 0.25:
                                 hits[pair].append(jump_shot(ball_location,intercept_time,best_shot_vector,slope,-1))
     return hits
