@@ -247,7 +247,7 @@ class Aerial():
 
         if T <= 0 or not shot_valid(agent, self, threshold = 150):
             agent.pop()
-            agent.push(recovery(self.ball.location))
+            agent.push(recovery(agent.ball.location))
 
     def is_viable(self, agent: CarObject, time: float):
         T = self.intercept_time - time
