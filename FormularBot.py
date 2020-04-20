@@ -83,7 +83,7 @@ class FormularBot(GoslingAgent):
         else:
             goalie = False
 
-        if agent.index == 0:
+            #if agent.index == 0:
             # print(item.location.y * - side(agent.team), agent.ball.location.y * - side(agent.team))
             # agent.debug_stack()
             # print(shooting,goalie)
