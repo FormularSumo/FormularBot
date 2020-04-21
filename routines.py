@@ -444,7 +444,7 @@ class goto_boost():
         car_to_boost = self.boost.location - agent.me.location
         distance_remaining = car_to_boost.flatten().magnitude()
 
-        agent.line(self.boost.location - Vector3(0,0,500),self.boost.location + Vector3(0,0,500),[0,255,0])
+        agent.line(self.boost.location - Vector3(0,0,500),self.boost.location + Vector3(0,0,500),[0,255,255])
 
         if self.target != None:
             vector = (self.target - self.boost.location).normalize()
