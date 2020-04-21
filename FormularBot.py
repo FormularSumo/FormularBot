@@ -73,7 +73,7 @@ class FormularBot(GoslingAgent):
 
         
 
-        if me_onside and (closest_to_ball or closest_to_friendly_goal and distance_ball_friendly_goal < 5000 or (agent.ball.location.y * side(agent.team) * -1 > 2800 * side(agent.team) * -1) and agent.ball.location.x < 1700 and agent.ball.location.x > -1700):
+        if me_onside and (closest_to_ball or (agent.ball.location.y * side(agent.team) * -1 > 2500 * side(agent.team) * -1 and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
             shooting = True
         else:
             shooting = False    
@@ -83,7 +83,7 @@ class FormularBot(GoslingAgent):
         else:
             goalie = False
 
-            #if agent.index == 0:
+        # if agent.index == 0:
             # print(item.location.y * - side(agent.team), agent.ball.location.y * - side(agent.team))
             # agent.debug_stack()
             # print(shooting,goalie)
@@ -135,8 +135,8 @@ class FormularBot(GoslingAgent):
                 else:
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
-            if agent.index == 0:
-                print(stack)
+            # if agent.index == 0:
+            #     print(stack)
 
         if agent.me.velocity[0] == 0 and int(agent.me.location.z) == 40:
             agent.controller.jump = True
@@ -144,14 +144,14 @@ class FormularBot(GoslingAgent):
         if stack != 'kickoff':
             if stack == 'getting boost' and (not(close and distance_ball_friendly_goal < 2000) and ((distance_ball_friendly_goal > 6000 and agent.me.boost > 20) or (distance_ball_friendly_goal < 6000 and close) or goalie or shooting)):
                 agent.clear()
-            if stack == 'going centre' and (shooting or goalie or close):
+            if stack == 'going centre' and (shooting or goalie or (close and (agent.me.location.y * side(agent.team < 2500 * side(agent.team)) or agent.me.location.y * side(agent.team > 2500 * side(agent.team)))):
                 agent.clear()
             elif stack == 'going centre':
                 if not me_onside:
                     agent.controller.boost = True
                 else:
                     agent.controller.boost = False
-            if stack == 'shooting' and shooting == False and not (close and (agent.me.airborne or me_onside)):
+            if stack == 'shooting' and shooting == False and not (close and (agent.me.airborne or me_onside or agent.me.location.y * side(agent.team > 2500 * -side(agent.team)))):
                 agent.clear()    
             if stack == 'goalie' and goalie == False:
                 agent.clear()
