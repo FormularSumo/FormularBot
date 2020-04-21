@@ -144,7 +144,7 @@ class FormularBot(GoslingAgent):
         if stack != 'kickoff':
             if stack == 'getting boost' and (not(close and distance_ball_friendly_goal < 2000) and ((distance_ball_friendly_goal > 6000 and agent.me.boost > 20) or (distance_ball_friendly_goal < 6000 and close) or goalie or shooting)):
                 agent.clear()
-            if stack == 'going centre' and (shooting or goalie or (close and (agent.me.location.y * side(agent.team < 2500 * side(agent.team)) or agent.me.location.y * side(agent.team > 2500 * side(agent.team)))):
+            if stack == 'going centre' and (shooting or goalie or (close and (agent.me.location.y * side(agent.team < 2500 * side(agent.team)) or agent.me.location.y * side(agent.team > 2500 * side(agent.team))))):
                 agent.clear()
             elif stack == 'going centre':
                 if not me_onside:
