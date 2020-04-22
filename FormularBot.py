@@ -78,13 +78,12 @@ class FormularBot(GoslingAgent):
         else:
             shooting = False    
 
-        if closest_to_friendly_goal and (distance_ball_friendly_goal > 6000 or agent.kickoff_flag) and len(agent.friends) > 0 and not(close and not me_onside):
+        if not(me_onside and closest_to_ball) and closest_to_friendly_goal and len(agent.friends) > 0 and not(close and not me_onside):
             goalie = True
         else:
             goalie = False
 
         # if agent.index == 0:
-            # print(item.location.y * - side(agent.team), agent.ball.location.y * - side(agent.team))
             # agent.debug_stack()
             # print(shooting,goalie)
             # agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
@@ -100,7 +99,6 @@ class FormularBot(GoslingAgent):
             # my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
             # agent.line(my_point - Vector3(0,0,100), my_point + Vector3(0,0,500), [0,255,0])
         
-
         if len(agent.stack) < 1:
             if agent.kickoff_flag and closest_to_ball:
                 stack = 'kickoff'
@@ -135,23 +133,43 @@ class FormularBot(GoslingAgent):
                 else:
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
-            # if agent.index == 0:
-            #     print(stack)
+
+        if not stack == kickoff and not(stack == 'shooting' and (close and (agent.me.airborne or me_onside or agent.me.location.y * side(agent.team > 2500 * -side(agent.team))))):
+    
+            if agent.kickoff_flag and closest_to_ball:
+                if stack != 'kickoff':
+                    agent.clear()
+            elif goalie:
+                if stack != 'goalie':
+                    agent.clear()
+            elif shooting:
+                if stack != 'shooting':
+                    agent.clear()
+            elif distance_ball_friendly_goal > 6000:
+                if agent.me.boost < 20:
+                    if stack != 'getting boost':
+                        agent.clear()
+                elif stack != 'going centre':
+                    agent.clear()
+            else:
+                if not close:
+                    if closest_to_friendly_goal:
+                        if stack != 'goalie':
+                            agent.clear()
+                    elif stack != 'going centre':
+                        agent.clear()
+                elif stack != 'getting boost':
+                    agent.clear()
+
 
         if agent.me.velocity[0] == 0 and int(agent.me.location.z) == 40:
             agent.controller.jump = True
-                        
-        if stack != 'kickoff':
-            if stack == 'getting boost' and (not(close and distance_ball_friendly_goal < 2000) and ((distance_ball_friendly_goal > 6000 and agent.me.boost > 20) or (distance_ball_friendly_goal < 6000 and close) or goalie or shooting)):
-                agent.clear()
-            if stack == 'going centre' and (shooting or goalie or (close and (agent.me.location.y * side(agent.team < 2500 * side(agent.team)) or agent.me.location.y * side(agent.team > 2500 * side(agent.team))))):
-                agent.clear()
-            elif stack == 'going centre':
+
+        if stack == 'going centre':
                 if not me_onside:
                     agent.controller.boost = True
                 else:
                     agent.controller.boost = False
-            if stack == 'shooting' and shooting == False and not (close and (agent.me.airborne or me_onside or agent.me.location.y * side(agent.team > 2500 * -side(agent.team)))):
-                agent.clear()    
-            if stack == 'goalie' and goalie == False:
-                agent.clear()
+
+        # if agent.index == 0:
+        #     print(stack)
