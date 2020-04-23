@@ -37,6 +37,7 @@ class FormularBot(GoslingAgent):
         me_onside = my_distance + 80 < my_ball_distance
 
         close = (agent.me.location - agent.ball.location).magnitude() < 1000
+        very_close = (agent.me.location - agent.ball.location).magnitude() < 500
         distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
         distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
 
@@ -123,8 +124,8 @@ class FormularBot(GoslingAgent):
                     stack = 'going centre'
                     agent.push(go_centre)
             else:
-                if not close:
-                    if closest_ally_friendly_goal_distance > distance_to_friendly_goal:
+                if not very_close:
+                    if goalie:
                         stack = 'goalie'
                         agent.push(goto_friendly_goal)
                     else:
@@ -152,8 +153,8 @@ class FormularBot(GoslingAgent):
                 elif stack != 'going centre':
                     agent.clear()
             else:
-                if not close:
-                    if closest_to_friendly_goal:
+                if not very_close:
+                    if goalie:
                         if stack != 'goalie':
                             agent.clear()
                     elif stack != 'going centre':
