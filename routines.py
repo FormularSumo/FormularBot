@@ -45,7 +45,6 @@ class goto_friendly_goal():
             relative = agent.foe_goal.location - agent.me.location
             defaultPD(agent,agent.me.local(relative))
             angles = defaultPD(agent, agent.me.local(relative))
-            defaultThrottle(agent,0)
         
         if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
             agent.push(half_flip())
@@ -109,16 +108,20 @@ class demo_enemy_closest_ball():
         if agent.me.boost < 10:
             agent.push(get_nearest_big_boost)
         else:  
-            relative_target = agent.foes[y].location - agent.me.location
-            local_target = agent.me.local(relative_target)
-            defaultPD(agent, local_target)
-            defaultThrottle(agent, 2300)
-            distance_remaining = local_target.flatten().magnitude()
+            try:
+                relative_target = agent.foes[y].location - agent.me.location
+                local_target = agent.me.local(relative_target)
+                defaultPD(agent, local_target)
+                defaultThrottle(agent, 2300)
+                distance_remaining = local_target.flatten().magnitude()
+                
+                if distance_remaining < 2000 or agent.me.boost > 50 and distance_remaining < 5000:
+                    agent.controller.boost = True
+                else:
+                    agent.controller.boost = False
+            except:
+                print('There are no enemies to demo :(')
             
-            if distance_remaining < 2000 or agent.me.boost > 50 and distance_remaining < 5000:
-                agent.controller.boost = True
-            else:
-                agent.controller.boost = False
 
 class half_flip():
     def __init__(self):

@@ -11,4 +11,4 @@ class DemoBot(GoslingAgent):
             if agent.kickoff_flag:
                 agent.push(kickoff(int(agent.me.location.x * side(agent.team))))
             else:
-                agent.push(demo_enemy_closest_ball(True))
+                agent.push(demo_enemy_closest_ball)

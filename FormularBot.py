@@ -14,8 +14,8 @@ from routines import *
 class FormularBot(GoslingAgent):
     def run(agent):
         global stack
-        relative_target = agent.ball.location - agent.friend_goal.location
-        distance_ball_friendly_goal = relative_target.magnitude()
+        distance_ball_friendly_goal = (agent.ball.location - agent.friend_goal.location).magnitude()
+        distance_ball_foe_goal = (agent.ball.location - agent.foe_goal.location).magnitude()
 
         if len(agent.foes) > 0:
             enemies = agent.foes
@@ -36,7 +36,7 @@ class FormularBot(GoslingAgent):
         my_distance = my_goal_to_ball.dot(goal_to_me)
         me_onside = my_distance + 80 < my_ball_distance
 
-        close = (agent.me.location - agent.ball.location).magnitude() < 1000
+        close = (agent.me.location - agent.ball.location).magnitude() < 1500
         very_close = (agent.me.location - agent.ball.location).magnitude() < 500
         distance_to_ball = (agent.me.location - agent.ball.location).flatten().magnitude()
         distance_to_friendly_goal = (agent.me.location - agent.friend_goal.location).flatten().magnitude()
@@ -74,7 +74,7 @@ class FormularBot(GoslingAgent):
 
         
 
-        if me_onside and (closest_to_ball or (agent.ball.location.y * side(agent.team) * -1 > 2500 * side(agent.team) * -1 and agent.ball.location.x < 1500 and agent.ball.location.x > -1500)):
+        if me_onside and (closest_to_ball or (distance_ball_foe_goal < 4000 and -1250 < agent.ball.location.x < 1250) or distance_ball_friendly_goal < 3000):
             shooting = True
         else:
             shooting = False    
@@ -85,20 +85,18 @@ class FormularBot(GoslingAgent):
             goalie = False
 
         # if agent.index == 0:
-            # agent.debug_stack()
-            # print(shooting,goalie)
-            # agent.line(Vector3(1500,3000,50),Vector3(-1500,3000,50),[0,255,255])
-            # print(closest_to_ball)
-            # print(distance_to_ball,closest_ally_to_ball_distance)
-            # print(close)
-            # print(me_onside)
-            # print(distance_ball_friendly_goal)
-            # agent.line(agent.foe_goal.left_post,agent.foe_goal.right_post)
-            # print(Vector3(agent.ball.location))
-            # print(closest_ally_friendly_goal_distance,distance_to_friendly_goal)
-            # agent.line(agent.friend_goal.location, agent.ball.location, [255,255,255])
-            # my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
-            # agent.line(my_point - Vector3(0,0,100), my_point + Vector3(0,0,500), [0,255,0])
+        #     agent.debug_stack()
+        #     print(shooting,goalie)
+        #     print(closest_to_ball)
+        #     print(distance_to_ball,closest_ally_to_ball_distance)
+        #     print(close)
+        #     print(me_onside)
+        #     agent.line(agent.foe_goal.left_post,agent.foe_goal.right_post)
+        #     print(Vector3(agent.ball.location))
+        #     print(closest_ally_friendly_goal_distance,distance_to_friendly_goal)
+        #     agent.line(agent.friend_goal.location, agent.ball.location, [255,255,255])
+        #     my_point = agent.friend_goal.location + (my_goal_to_ball * my_distance)
+        #     agent.line(my_point - Vector3(0,0,100), my_point + Vector3(0,0,500), [0,255,0])
         
         if len(agent.stack) < 1:
             if agent.kickoff_flag and closest_to_ball:
@@ -135,7 +133,7 @@ class FormularBot(GoslingAgent):
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
 
-        if not stack == kickoff and not(stack == 'shooting' and (close and (agent.me.airborne or me_onside or agent.me.location.y * side(agent.team > 2500 * -side(agent.team))))):
+        if not stack == kickoff and not(stack == 'shooting' and (close and (agent.me.airborne or me_onside or distance_ball_foe_goal < 3500))) and not(stack == 'getting boost' and agent.me.boost < 20):
     
             if agent.kickoff_flag and closest_to_ball:
                 if stack != 'kickoff':
