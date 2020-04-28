@@ -36,11 +36,12 @@ class ball_chase():
 class goto_friendly_goal():
     #Drives towards friendly goal. If touching or over goal line stops moving and faces enemy goal
     def run(agent):
-        if abs(agent.me.location.y) < 5000:   
+        if abs(agent.me.location.y) < 5000:
             relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
             defaultPD(agent,agent.me.local(relative))
             angles = defaultPD(agent, agent.me.local(relative))
-            defaultThrottle(agent,2300)
+            if abs(agent.me.location.y) < 4900:
+                defaultThrottle(agent,2300)
         else:
             relative = agent.foe_goal.location - agent.me.location
             defaultPD(agent,agent.me.local(relative))

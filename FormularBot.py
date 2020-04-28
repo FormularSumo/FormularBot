@@ -79,7 +79,7 @@ class FormularBot(GoslingAgent):
         else:
             shooting = False    
 
-        if not(me_onside and closest_to_ball) and closest_to_friendly_goal and len(agent.friends) > 0 and not(close and not me_onside):
+        if not(shooting) and closest_to_friendly_goal and not(close and not me_onside) and len(agent.friends) > 0:
             goalie = True
         else:
             goalie = False
@@ -133,7 +133,7 @@ class FormularBot(GoslingAgent):
                     stack = 'getting boost'
                     agent.push(get_nearest_big_boost)
 
-        if not stack == kickoff and not(stack == 'shooting' and (close and (agent.me.airborne or me_onside or distance_ball_foe_goal < 3500))) and not(stack == 'getting boost' and agent.me.boost < 20):
+        if not stack == kickoff and not(stack == 'shooting' and (close and me_onside)) and not(stack == 'getting boost' and agent.me.boost < 20 and len(agent.friends) > 1):
     
             if agent.kickoff_flag and closest_to_ball:
                 if stack != 'kickoff':
