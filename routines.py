@@ -110,11 +110,24 @@ class demo_enemy_closest_ball():
             agent.push(get_nearest_big_boost)
         else:  
             try:
-                relative_target = agent.foes[y].location - agent.me.location
-                local_target = agent.me.local(relative_target)
-                defaultPD(agent, local_target)
-                defaultThrottle(agent, 2300)
-                distance_remaining = local_target.flatten().magnitude()
+                if len(agent.foes) > 0:
+                    enemies = agent.foes
+                    closest = enemies[0]
+                    closest_distance = (enemies[0].location - agent.ball.location).magnitude()
+                    x = 0
+                    y = 0
+                    for item in enemies:
+                        item_distance = (item.location - agent.ball.location).magnitude()
+                        if item_distance < closest_distance:
+                            closest = item
+                            closest_distance = item_distance
+                            y = x
+                        x =+ 1
+                        
+                    local_target = agent.me.local(agent.foes[y].location - agent.me.location)
+                    defaultPD(agent, local_target)
+                    defaultThrottle(agent, 2300)
+                    distance_remaining = local_target.flatten().magnitude()
                 
                 if distance_remaining < 2000 or agent.me.boost > 50 and distance_remaining < 5000:
                     agent.controller.boost = True
@@ -589,25 +602,11 @@ class jump_shot():
                 agent.controller.yaw = self.y if abs(self.y) > 0.3 else 0
 
 class kickoff():
-    def __init__(self,x_position):
+    def __init__(self,kickoff_position):
         #the time the jump began
         self.time = -1
         self.counter = 0
-        try:
-            temp = self.kickoff
-            del temp
-        except:
-            #Works out kickoff position spawned in
-            if x_position == 2047 or x_position == 2048:
-                self.kickoff = 'diagonal_right'
-            elif x_position == -2047 or x_position == -2048:
-                self.kickoff = 'diagonal_left'
-            elif x_position == -255 or x_position == -256:
-                self.kickoff = 'back_left'
-            elif x_position == 255 or x_position == 256:
-                self.kickoff = 'back_right'
-            else:
-                self.kickoff = 'back_centre'
+        self.kickoff = kickoff_position
     def run(self,agent):
         if agent.kickoff_flag == False:
             agent.pop()
