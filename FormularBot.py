@@ -20,7 +20,7 @@ class FormularBot(GoslingAgent):
         my_goal_to_ball,my_ball_distance = (agent.ball.location - agent.friend_goal.location).normalize(True)
         goal_to_me = agent.me.location - agent.friend_goal.location
         my_distance = my_goal_to_ball.dot(goal_to_me)
-        me_onside = my_distance + 80 < my_ball_distance
+        me_onside = my_distance + 70 < my_ball_distance
 
         close = (agent.me.location - agent.ball.location).magnitude() < 1500
         very_close = (agent.me.location - agent.ball.location).magnitude() < 500
@@ -69,8 +69,10 @@ class FormularBot(GoslingAgent):
             kickoff_position = 'back_left'
         elif x_position == 255 or x_position == 256:
             kickoff_position = 'back_right'
-        else:
+        elif x_position == 0:
             kickoff_position = 'back_centre'
+        else:
+            kickoff_position = 'unknown'
 
         #Shoots if onside and (closest to ball or ball within 4000 of foe goal and between -1250 and 1250 x or ball is within 3000 of own goal)
         if me_onside and (closest_to_ball or (distance_ball_foe_goal < 4000 and -1250 < agent.ball.location.x < 1250) or distance_ball_friendly_goal < 3000):

@@ -15,8 +15,10 @@ class DemoBot(GoslingAgent):
             kickoff_position = 'back_left'
         elif x_position == 255 or x_position == 256:
             kickoff_position = 'back_right'
-        else:
+        elif x_position == 0:
             kickoff_position = 'back_centre'
+        else:
+            kickoff_position = 'unknown'
 
         if agent.index == 0:
             agent.debug_stack()
