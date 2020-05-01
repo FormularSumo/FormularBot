@@ -187,6 +187,7 @@ class go_centre():
         if relative_target.magnitude() > 350:
             defaultPD(agent, local_target)
             defaultThrottle(agent, 2300)
+            angles = defaultPD(agent, agent.me.local(relative_target))
             if abs(angles[1]) > 1:
                 agent.controller.handbrake = True
                 agent.controller.boost = False
