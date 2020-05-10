@@ -711,38 +711,40 @@ class kickoff():
                         else:
                             agent.controller.yaw = -0.85
             
-            # elif self.kickoff == 'back_centre':
-            #     #Fast back_centre kickoff
-            #     defaultThrottle(agent,2300)
-            #     agent.controller.boost = True
-            #     if elapsed < 0.4:
-            #         relative_target = agent.ball.location - agent.me.location
-            #         local_target = agent.me.local(relative_target)
-            #         defaultPD(agent,local_target)
-            #     if elapsed < 0.65:
-            #         relative_target = agent.boosts[31 if side(agent.team) == -1 else 2].location - agent.me.location
-            #         local_target = agent.me.local(relative_target)
-            #         defaultPD(agent,local_target)
-            #     if elapsed > 0.65 and elapsed < 0.7:
-            #         agent.controller.jump = True
-            #     elif elapsed > 0.65 and self.counter < 3:
-            #         agent.controller.jump = False
-            #         self.counter += 1
-            #     elif elapsed > 0.65 and self.counter < 4:
-            #         agent.controller.jump = True
-            #         agent.controller.pitch = -1
-            #         #Faces central 
-            #         agent.controller.yaw = -1            
-            #         self.counter += 1
-            #     elif self.counter == 4:
-            #         agent.controller.jump = False
-            #         self.counter += 1
-            #     elif self.counter > 4:
-            #         #Once landed flips into the ball
-            #         if not agent.me.airborne:
-            #             agent.push(flip(agent.me.local(agent.ball.location - agent.me.location)))
-            #         else:
-            #             agent.controller.yaw = -0.5
+            elif self.kickoff == 'back_centre':
+                #Fast back_centre kickoff
+                defaultThrottle(agent,2300)
+                if self.counter < 5:
+                    agent.controller.boost = True
+                if elapsed < 0.45:
+                    relative_target = agent.ball.location - agent.me.location
+                    local_target = agent.me.local(relative_target)
+                    defaultPD(agent,local_target)
+                elif elapsed < 1:
+                    relative_target = agent.boosts[31 if side(agent.team) == -1 else 2].location - agent.me.location
+                    local_target = agent.me.local(relative_target)
+                    defaultPD(agent,local_target)
+                elif elapsed > 1 and elapsed < 1.05:
+                    agent.controller.jump = True
+                elif elapsed > 1 and self.counter < 3:
+                    agent.controller.jump = False
+                    self.counter += 1
+                elif elapsed > 1 and self.counter < 4:
+                    agent.controller.jump = True
+                    agent.controller.pitch = -1
+                    #Faces central 
+                    agent.controller.yaw = -1               
+                    self.counter += 1
+                elif self.counter == 4:
+                    agent.controller.jump = False
+                    self.counter += 1
+                elif self.counter > 4:
+                    #Once landed flips into the ball
+                    if agent.me.airborne:
+                        agent.controller.boost = False
+                        agent.controller.yaw = 0
+                    else:
+                        agent.push(flip(agent.me.local(agent.ball.location - agent.me.location)))                    
 
             else:
                 #kickoff for non-football gamemodes (heatseaker, dropshot etc) - just drives towards ball and flips
