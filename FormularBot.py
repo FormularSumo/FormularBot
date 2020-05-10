@@ -118,7 +118,6 @@ class FormularBot(GoslingAgent):
                 stack = 'shooting'
                 if len(shots["goal"]) > 0:
                     agent.push(shots["goal"][0])
-                    #send(random.choice(chat_ids)) - TODO
                 elif len(shots["upfield"]) > 0 and abs(agent.friend_goal.location.y - agent.ball.location.y) < 8490:
                     agent.push(shots["upfield"][0])
                 else:  
