@@ -17,7 +17,6 @@ throttle_accel: float = 200 / 3
 boost_per_second: float = 30
 
 # Jump constants
-
 jump_speed: float = 291.667
 jump_acc = 1458.3333
 jump_min_duration = 0.025
@@ -489,8 +488,8 @@ class goto_boost():
         else:
             adjustment = 9999
             car_to_target = 0
-            final_target = self.boost.location
-
+            final_target = self.boost.location.copy()
+        
         #Some adjustment to the final target to ensure it's inside the field and we don't try to dirve through any goalposts to reach it
         if abs(agent.me.location[1]) > 5150: final_target[0] = cap(final_target[0],-750,750)
 
