@@ -1,15 +1,19 @@
 from tools import  *
 from objects import *
 from routines import *
+from rlbot.utils.structures.quick_chats import QuickChats
 #from rlbot.utils.game_state_util import GameState, BallState, CarState, Physics, Vector3, Rotator, GameInfoState
 
 # car_state = CarState(boost_amount=100)
 
 # ball_state = BallState(Physics(location=Vector3(0,0,2000)))
 
-# game_state = GameState(ball=ball_state, cars={self.index: car_state}, game_info=game_info_state)
+# game_info_state = GameInfoState(world_gravity_z=0, game_speed=1)
 
-# self.set_game_state(game_state)
+# game_state = GameState(ball=ball_state, cars={agent.index: car_state}, game_info=game_info_state)
+
+# agent.set_game_state(game_state)
+
 
 class FormularBot(GoslingAgent):
     def run(agent):
@@ -110,6 +114,8 @@ class FormularBot(GoslingAgent):
         if len(agent.stack) < 1:
             if go_for_kickoff:
                 stack = 'kickoff'
+                if len(agent.friends) > 0:
+                    agent.send_quick_chat(QuickChats.CHAT_EVERYONE,QuickChats.Information_IGotIt)
                 agent.push(kickoff(kickoff_position))
             elif goalie:
                 stack = 'goalie'
