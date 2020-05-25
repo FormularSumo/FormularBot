@@ -40,7 +40,7 @@ class FormularBot(GoslingAgent):
         shots = find_hits(agent,targets)
 
         allies = agent.friends
-        cally_to_ball = "none"
+        ally_to_ball = "none"
         ally_to_ball_distance = 99999
         ally_to_friendly_goal = "none"
         ally_to_friendly_goal_distance = 99999

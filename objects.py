@@ -80,6 +80,7 @@ class GoslingAgent(BaseAgent):
             self.stack = []
         #Tells us when to go for kickoff
         self.kickoff_flag = packet.game_info.is_round_active and packet.game_info.is_kickoff_pause
+        self.kickoff_finished = packet.game_info.is_round_active and not packet.game_info.is_kickoff_pause
     def get_output(self,packet):
         #Reset controller
         self.controller.__init__()
