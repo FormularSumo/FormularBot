@@ -16,6 +16,10 @@ from rlbot.utils.structures.quick_chats import QuickChats
 
 
 class FormularBot(GoslingAgent):
+    #Responds to quickchats receieved from other players
+    def handle_quick_chat(self, index, team, quick_chat):
+        if index != self.index and quick_chat == QuickChats.Information_IGotIt and self.kickoff_flag:
+            self.send_quick_chat(QuickChats.CHAT_TEAM_ONLY, QuickChats.Information_Defending)
     def run(agent):
         global stack
         distance_ball_friendly_goal = (agent.ball.location - agent.friend_goal.location).magnitude()
@@ -112,10 +116,10 @@ class FormularBot(GoslingAgent):
 
         #Decision making code
         if len(agent.stack) < 1:
+            if go_for_kickoff and joint_closest_to_ball and len(agent.friends) > 0:
+                agent.send_quick_chat(QuickChats.CHAT_EVERYONE,QuickChats.Information_IGotIt)
             if go_for_kickoff:
                 stack = 'kickoff'
-                if len(agent.friends) > 0:
-                    agent.send_quick_chat(QuickChats.CHAT_EVERYONE,QuickChats.Information_IGotIt)
                 agent.push(kickoff(kickoff_position))
             elif goalie:
                 stack = 'goalie'
