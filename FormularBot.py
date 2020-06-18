@@ -112,10 +112,10 @@ class FormularBot(GoslingAgent):
 
         #Decision making code
         if len(agent.stack) < 1:
+            if go_for_kickoff and joint_closest_to_ball and len(agent.friends) > 0:
+                agent.send_quick_chat(QuickChats.CHAT_EVERYONE,QuickChats.Information_IGotIt)
             if go_for_kickoff:
                 stack = 'kickoff'
-                if len(agent.friends) > 0:
-                    agent.send_quick_chat(QuickChats.CHAT_EVERYONE,QuickChats.Information_IGotIt)
                 agent.push(kickoff(kickoff_position))
             elif goalie:
                 stack = 'goalie'
