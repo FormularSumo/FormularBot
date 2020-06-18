@@ -114,8 +114,9 @@ class FormularBot(GoslingAgent):
         else:
             goalie = False
         
-        #Only go for kickoff if closest or joint closeset and on left side
-        if agent.kickoff_flag and (closest_to_ball or (joint_closest_to_ball and not(ally_taking_kickoff == True) and (kickoff_position == 'diagonal_left' or kickoff_position == 'back_left'))):
+
+        #Only go for kickoff if closest or joint closest and on left side
+        if agent.kickoff_flag and (closest_to_ball or (joint_closest_to_ball and (kickoff_position == 'diagonal_left' or kickoff_position == 'back_left'))):
             go_for_kickoff = True
         else:
             go_for_kickoff = False
