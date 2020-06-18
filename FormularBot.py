@@ -16,7 +16,31 @@ from rlbot.utils.structures.quick_chats import QuickChats
 
 
 class FormularBot(GoslingAgent):
+    #Responds to quickchats receieved from other players
+    global ally_taking_kickoff
+    def handle_quick_chat(self, index, team, quick_chat):
+        try:
+            a = ally_taking_kickoff
+        except:
+            ally_taking_kickoff = 'False'
+        if team == self.team:
+            if self.kickoff_flag:
+                if quick_chat == QuickChats.Information_IGotIt and ally_taking_kickoff != True:
+                    self.send_quick_chat(QuickChats.CHAT_TEAM_ONLY, QuickChats.Information_Defending)
+                    ally_taking_kickoff = True
+                if quick_chat == QuickChats.Information_Defending:
+                    self.send_quick_chat(QuickChats.CHAT_TEAM_ONLY, QuickChats.Information_IGotIt)
+                    ally_taking_kickoff = False
+        else:
+            print('ignoring message from other team')
     def run(agent):
+        if agent.kickoff_finished:
+            ally_taking_kickoff = 'False'
+        try:
+            a = ally_taking_kickoff
+        except:
+            ally_taking_kickoff = 'False'
+            
         global stack
         distance_ball_friendly_goal = (agent.ball.location - agent.friend_goal.location).magnitude()
         distance_ball_foe_goal = (agent.ball.location - agent.foe_goal.location).magnitude()
@@ -60,7 +84,7 @@ class FormularBot(GoslingAgent):
         closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
 
         closest_to_ball = distance_to_ball < closest_ally_to_ball_distance
-        joint_closest_to_ball = distance_to_ball == closest_ally_to_ball_distance
+        joint_closest_to_ball = round(distance_to_ball) == round(closest_ally_to_ball_distance)
         closest_to_friendly_goal = distance_to_friendly_goal <= closest_ally_friendly_goal_distance
 
         #Works out kickoff position and passes that variable onto kickoff function in routines
@@ -90,6 +114,7 @@ class FormularBot(GoslingAgent):
         else:
             goalie = False
         
+
         #Only go for kickoff if closest or joint closest and on left side
         if agent.kickoff_flag and (closest_to_ball or (joint_closest_to_ball and (kickoff_position == 'diagonal_left' or kickoff_position == 'back_left'))):
             go_for_kickoff = True
