@@ -84,7 +84,7 @@ class FormularBot(GoslingAgent):
         closest_ally_friendly_goal_distance = ally_to_friendly_goal_distance 
 
         closest_to_ball = distance_to_ball < closest_ally_to_ball_distance
-        joint_closest_to_ball = round(distance_to_ball) == round(closest_ally_to_ball_distance)
+        joint_closest_to_ball = distance_to_ball == closest_ally_to_ball_distance
         closest_to_friendly_goal = distance_to_friendly_goal <= closest_ally_friendly_goal_distance
 
         #Works out kickoff position and passes that variable onto kickoff function in routines
