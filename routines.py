@@ -34,32 +34,24 @@ class ball_chase():
 
 class goto_friendly_goal():
     #Drives towards friendly goal. If touching or over goal line stops moving and faces enemy goal
-    def run(agent):
-        if side(agent.team) == -1:
-            if agent.me.location.y > -5000:
-                relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
-                defaultPD(agent,agent.me.local(relative))
-                angles = defaultPD(agent, agent.me.local(relative))
-                if agent.me.location.y > -4900:
+    def __init__(self):
+        self.step = 10
+    def run(self,agent):
+        if (agent.me.location.y > -5000 if side(agent.team) == -1 else agent.me.location.y < 5000):
+            relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
+            defaultPD(agent,agent.me.local(relative))
+            angles = defaultPD(agent, agent.me.local(relative))
+            if (agent.me.location.y > -4950 if side(agent.team) == -1 else agent.me.location.y < 4950):
+                if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+                    defaultThrottle(agent,-2300)
+                    self.step = 10
+                else:
                     defaultThrottle(agent,2300)
-            else:
-                relative = agent.foe_goal.location - agent.me.location
-                defaultPD(agent,agent.me.local(relative))
-                angles = defaultPD(agent, agent.me.local(relative))
-        else:
-            if agent.me.location.y < 5000:
-                relative = Vector3(0,5120*side(agent.team),0) - agent.me.location
-                defaultPD(agent,agent.me.local(relative))
-                angles = defaultPD(agent, agent.me.local(relative))
-                if agent.me.location.y < 4900:
-                    defaultThrottle(agent,2300)
-            else:
-                relative = agent.foe_goal.location - agent.me.location
-                defaultPD(agent,agent.me.local(relative))
-                angles = defaultPD(agent, agent.me.local(relative))
-            
-        if abs(angles[1]) > 2.88 and abs(angles[1]) < 3.4:
+                    self.step = 0
+        elif self.step == 0:
             agent.push(half_flip())
+            self.step = 10
+
 
 
 class get_nearest_big_boost():
@@ -187,7 +179,7 @@ class go_centre():
             defaultPD(agent, local_target)
             defaultThrottle(agent, 2300)
             angles = defaultPD(agent, agent.me.local(relative_target))
-            if abs(angles[1]) > 1:
+            if abs(angles[1]) > 1.5:
                 agent.controller.handbrake = True
                 agent.controller.boost = False
         else:
