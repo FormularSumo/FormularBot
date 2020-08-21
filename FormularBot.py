@@ -2,7 +2,7 @@ from tools import  *
 from objects import *
 from routines import *
 from rlbot.utils.structures.quick_chats import QuickChats
-#from rlbot.utils.game_state_util import GameState, BallState, CarState, Physics, Vector3, Rotator, GameInfoState
+# from rlbot.utils.game_state_util import GameState, BallState, CarState, Physics, Vector3, Rotator, GameInfoState
 
 # car_state = CarState(boost_amount=100)
 
@@ -105,6 +105,8 @@ class FormularBot(GoslingAgent):
             go_for_kickoff = False
 
         # if agent.index == 0: 
+        #     print(agent.ball.latest_touched_team)
+        #     print(agent.me.orientation[2][2])
         #     print(me_onside2)
         #     print(distance_ball_friendly_goal)
         #     agent.debug_stack()
@@ -192,8 +194,9 @@ class FormularBot(GoslingAgent):
                     agent.clear()
 
         #Jumps if turtling
-        if agent.me.velocity[0] == 0 and int(agent.me.location.z) == 40:
+        if agent.me.velocity[0] == 0 and agent.me.orientation[2][2] < 0:
             agent.controller.jump = True
+
 
         #Boost if going centre and offside (getting back)
         if stack == 'going centre':
