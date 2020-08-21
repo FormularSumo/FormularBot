@@ -107,8 +107,7 @@ class FormularBot(GoslingAgent):
         else:
             go_for_kickoff = False
 
-        if agent.index == 0: 
-            print(stack)
+        # if agent.index == 0: 
         #     print(agent.me.orientation[2][2])
         #     print(me_onside2)
         #     print(distance_ball_friendly_goal)
