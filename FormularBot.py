@@ -42,6 +42,9 @@ class FormularBot(GoslingAgent):
         targets = {"goal": (agent.foe_goal.left_post,agent.foe_goal.right_post), "upfield": (left_field,right_field)}
         shots = find_hits(agent,targets)
 
+        possession = agent.ball.latest_touched_team if agent.ball.latest_touched_team == 1 else -1
+        have_possession = True if possession == side(agent.team) else False
+
         allies = agent.friends
         ally_to_ball = "none"
         ally_to_ball_distance = 99999
@@ -87,7 +90,7 @@ class FormularBot(GoslingAgent):
             side_of_ball = 'left'
 
         #Shoots if onside and (closest to ball or ball within 4000 of foe goal and between -1250 and 1250 x or ball is within 3000 of own goal)
-        if me_onside and (closest_to_ball or (distance_ball_foe_goal < 4000 and -1250 < agent.ball.location.x < 1250) or distance_ball_friendly_goal < 3000):
+        if me_onside and (closest_to_ball or (distance_ball_foe_goal < 4000 and -1250 < agent.ball.location.x < 1250 and closest_ally_to_ball_distance > 3000) or distance_ball_friendly_goal < 3000):
             shooting = True
         else:
             shooting = False    
@@ -104,8 +107,8 @@ class FormularBot(GoslingAgent):
         else:
             go_for_kickoff = False
 
-        # if agent.index == 0: 
-        #     print(agent.ball.latest_touched_team)
+        if agent.index == 0: 
+            print(stack)
         #     print(agent.me.orientation[2][2])
         #     print(me_onside2)
         #     print(distance_ball_friendly_goal)
@@ -147,6 +150,9 @@ class FormularBot(GoslingAgent):
                     agent.push(shots["upfield"][0])
                 else:  
                     agent.push(short_shot(agent.foe_goal.location))
+            elif distance_ball_foe_goal < 4000 and -1250 < agent.ball.location.x < 1250 and closest_ally_to_ball_distance < 3000 and have_possession:
+                stack = 'demoing'
+                agent.push(demo_enemy_closest_ball)
             elif distance_ball_friendly_goal > 6000:
                 if agent.me.boost < 20:
                     stack = 'getting boost'
@@ -167,7 +173,7 @@ class FormularBot(GoslingAgent):
                     agent.push(get_nearest_big_boost)
 
         #Stack clearing code (decides when to clear stack and do something else)
-        if not(stack == 'kickoff') and not(stack == 'shooting' and (close and me_onside)) and not(stack == 'getting boost' and agent.me.boost < 20 and not(closest_ally_friendly_goal)):
+        if not(stack == 'kickoff') and not(stack == 'shooting' and me_onside and not(stack == 'getting boost' and agent.me.boost < 20 and not(closest_ally_friendly_goal)):
             if go_for_kickoff:
                 if stack != 'kickoff':
                     agent.clear()
@@ -176,6 +182,9 @@ class FormularBot(GoslingAgent):
                     agent.clear()
             elif shooting:
                 if stack != 'shooting':
+                    agent.clear()
+            elif distance_ball_foe_goal < 3000 and -1250 < agent.ball.location.x < 1250 and closest_ally_to_ball_distance < 4000 and have_possession:
+                if stack != 'demoing':
                     agent.clear()
             elif distance_ball_friendly_goal > 6000:
                 if agent.me.boost < 20:

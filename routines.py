@@ -132,7 +132,7 @@ class demo_enemy_closest_ball():
                     defaultThrottle(agent, 2300)
                     distance_remaining = local_target.flatten().magnitude()
                 
-                if distance_remaining < 2000 or agent.me.boost > 50 and distance_remaining < 5000:
+                if distance_remaining < 2000 or agent.me.boost * 100 > distance_remaining:
                     agent.controller.boost = True
                 else:
                     agent.controller.boost = False
