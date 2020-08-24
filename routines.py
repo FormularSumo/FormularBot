@@ -110,28 +110,30 @@ class wavedash_recovery():
 class demo_enemy_closest_ball():
     def run(agent):
         if len(agent.foes) > 0:
-            if agent.me.boost < 10:
+            enemies = agent.foes
+            closest = enemies[0]
+            closest_distance = (enemies[0].location - agent.ball.location).magnitude()
+            x = 0
+            y = 0
+            for item in enemies:
+                item_distance = (item.location - agent.ball.location).magnitude()
+                if item_distance < closest_distance:
+                    closest = item
+                    closest_distance = item_distance
+                    y = x
+                x =+ 1
+                
+            local_target = agent.me.local(agent.foes[y].location - agent.me.location)
+            defaultPD(agent, local_target)
+            angles = defaultPD(agent, local_target)
+            agent.controller.handbrake = True if abs(angles[1]) > 1.5 else agent.controller.handbrake
+            defaultThrottle(agent, 2300)
+            distance_remaining = local_target.flatten().magnitude()
+            speed = math.sqrt(agent.me.velocity[0]**2+agent.me.velocity[1]**2+agent.me.velocity[2]**2)
+
+            if agent.me.boost < 10 and not(distance_remaining < 2000 and speed > 2100 and abs(angles[1] < 0.785398)):
                 agent.push(get_nearest_big_boost)
-            else:  
-                enemies = agent.foes
-                closest = enemies[0]
-                closest_distance = (enemies[0].location - agent.ball.location).magnitude()
-                x = 0
-                y = 0
-                for item in enemies:
-                    item_distance = (item.location - agent.ball.location).magnitude()
-                    if item_distance < closest_distance:
-                        closest = item
-                        closest_distance = item_distance
-                        y = x
-                    x =+ 1
-                    
-                local_target = agent.me.local(agent.foes[y].location - agent.me.location)
-                defaultPD(agent, local_target)
-                angles = defaultPD(agent, local_target)
-                defaultThrottle(agent, 2300)
-                distance_remaining = local_target.flatten().magnitude()
-            
+            else:              
                 if (distance_remaining < 2000 or agent.me.boost * 75 > distance_remaining) and abs(angles[1]) < 0.785398:
                     agent.controller.boost = True
                 else:

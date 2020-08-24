@@ -21,6 +21,7 @@ class DemoBot(GoslingAgent):
 
         if agent.index == 0:
             agent.debug_stack()
+            
         if len(agent.stack) < 1:     
             if agent.kickoff_flag:
                 agent.push(kickoff(kickoff_position))
@@ -28,5 +29,6 @@ class DemoBot(GoslingAgent):
                 #If not going doing kickoff pushes demo routine to stack
                 agent.push(demo_enemy_closest_ball)
         
-        # print(agent.ball.velocity) - testing for dribbling
-        # print(agent.game.time_remaining)
+        #Jumps if turtling
+        if agent.me.velocity[0] == 0 and agent.me.orientation[2][2] < 0:
+            agent.controller.jump = True
